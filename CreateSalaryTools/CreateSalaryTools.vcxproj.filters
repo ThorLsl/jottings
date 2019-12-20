@@ -21,9 +21,15 @@
     <ClCompile Include="CCreateSalaryTools.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Pub_function.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCreateSalaryTools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Pub_function.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -87,7 +87,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -148,9 +148,11 @@
   <ItemGroup>
     <ClCompile Include="CCreateSalaryTools.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Pub_function.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCreateSalaryTools.h" />
+    <ClInclude Include="Pub_function.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
