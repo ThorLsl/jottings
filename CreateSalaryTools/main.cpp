@@ -6,8 +6,11 @@ int main()
 	auto pSolution = CCreateSalaryTools();
 
 	pSolution.readInformation();
+	pSolution.CalculateSalary();
+	pSolution.autoAdjust();
+	pSolution.writeSalarySheet();
 
-	int k = 0;
+	system("pause");
 
 	return 0;
 }

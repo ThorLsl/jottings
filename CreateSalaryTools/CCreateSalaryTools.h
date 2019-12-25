@@ -28,6 +28,7 @@ public:
 	int RandWokingDays();
 	
 	bool isSalaryMatch(float fSalary);
+	void autoAdjust();
 private:
 	int m_iWorkerTotal;		//工人总数
 	double m_dSalaryTotal;	//工资总数
@@ -38,4 +39,7 @@ private:
 	int m_iMinWorkingDays;		//最小月工作天数
 
 	vector<SSalaryStruct> m_vecSalarySheet;
+
+	double m_dAverageMonthWage;
+	float m_CurSalaryTotal;
 };
