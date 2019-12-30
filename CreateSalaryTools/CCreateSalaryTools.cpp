@@ -22,20 +22,42 @@ void CCreateSalaryTools::readInformation()
 	tmp << in.rdbuf();
 	std::string pData = tmp.str();
 
-	std::cout << "Read informotion success" << endl;
-	
 	std::vector<string> vec_pData;
 	Pub_Split(pData.c_str(), "\r\n", vec_pData);
 
-	sscanf(vec_pData.back().c_str(), "%lf,%d,%lf,%lf,%d,%d",&m_dSalaryTotal,&m_iWorkerTotal,&m_dMinDailySalary,&m_dMaxDailySalary,&m_iMinWorkingDays,&m_iMaxWorkingDays);
-	std::cout << "工资总数：" << m_dSalaryTotal << endl
-		<< "工人总数：" << m_iWorkerTotal << endl
-		<< "最低日工资：" << m_dMinDailySalary << endl
-		<< "最高日工资：" << m_dMaxDailySalary << endl
-		<< "最小月工作天数" << m_iMinWorkingDays << endl
-		<< "最大月工作天数" << m_iMaxWorkingDays << endl;
+	if (vec_pData.size() == 4)
+	{
+		std::cout << "Read informotion success" << endl;
 
-	m_dAverageMonthWage = m_dSalaryTotal / m_iWorkerTotal;
+		sscanf(vec_pData.at(2).c_str(), "%lf,%d,%d,%d", &m_dSalaryTotal, &m_iWorkerTotal, &m_iMinWorkingDays, &m_iMaxWorkingDays);
+
+		std::vector<string> vec_pData1;
+		Pub_Split(vec_pData.back().c_str(), "#", vec_pData1);
+		m_dailyWageVec.clear();
+		for (size_t i = 0; i < vec_pData1.size(); i++)
+		{
+			double wage = 0.0f;
+			sscanf(vec_pData1.at(i).c_str(), "%lf", &wage);
+			m_dailyWageVec.push_back(wage);
+		}
+
+		m_dAverageMonthWage = m_dSalaryTotal / m_iWorkerTotal;
+
+		std::cout << "工资总数：" << m_dSalaryTotal << endl
+			<< "工人总数：" << m_iWorkerTotal << endl
+			<< "最小月工作天数" << m_iMinWorkingDays << endl
+			<< "最大月工作天数" << m_iMaxWorkingDays << endl;
+		std::cout << "日工资：";
+		for (auto temp : m_dailyWageVec)
+		{
+			std::cout << temp<<"\t";
+		}
+		std::cout << endl;
+	}
+	else
+	{
+		std::cout << "Read informotion false" << endl;
+	}
 }
 
 void CCreateSalaryTools::writeSalarySheet()
@@ -57,11 +79,15 @@ void CCreateSalaryTools::writeSalarySheet()
 	{
 		out << pdata;
 		out.close();
+
+		std::cout << "Write data to out.txt" << endl;
 	}
 }
 
 void CCreateSalaryTools::CalculateSalary()
 {
+	srand(time(NULL));
+
 	for (size_t i = 0; i < m_iWorkerTotal;)
 	{
 		float dailyWage = RandDailyWage();
@@ -80,24 +106,22 @@ void CCreateSalaryTools::CalculateSalary()
 			m_CurSalaryTotal += salary;
 			
 			i++;
+
+			//std::cout << dailyWage << "\t" << wokingDays << "\t" << salary << endl;
 		}
 	}
 }
 
 float CCreateSalaryTools::RandDailyWage()
 {
-	srand(time(NULL));
-
-	int iMin = m_dMinDailySalary / 10;
-	int iMax = m_dMaxDailySalary / 10;
-	float fDailyWage = (rand() % (iMax - iMin + 1) + iMin)*10.0f;
+	int k = rand() % (m_dailyWageVec.size());
+	//std::cout << k << endl;
+	float fDailyWage = m_dailyWageVec.at(k);
 	return fDailyWage;
 }
 
 int CCreateSalaryTools::RandWokingDays()
 {
-	srand(time(NULL));
-
 	int wokingDays = rand() % (m_iMaxWorkingDays - m_iMinWorkingDays + 1) + m_iMinWorkingDays;
 
 	return wokingDays;
@@ -106,6 +130,16 @@ int CCreateSalaryTools::RandWokingDays()
 bool CCreateSalaryTools::isSalaryMatch(float fSalary)
 {
 	if (0.0f < fSalary&&fSalary <= 5000.0f)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool CCreateSalaryTools::isWorkingDaysMatch(int days)
+{
+	if (m_iMinWorkingDays <= days&& days <= m_iMaxWorkingDays)
 	{
 		return true;
 	}
@@ -129,7 +163,7 @@ void CCreateSalaryTools::autoAdjust()
 			{
 				float wage = m_vecSalarySheet.at(index).s_fDailyWage;
 				float newWage = m_vecSalarySheet.at(index).s_dMonthWage - wage;
-				if (isSalaryMatch(newWage))
+				if (isSalaryMatch(newWage) && isWorkingDaysMatch(m_vecSalarySheet.at(index).s_iWokeingDays - 1))
 				{
 					m_vecSalarySheet.at(index).s_iWokeingDays -= 1;
 					m_vecSalarySheet.at(index).s_dMonthWage = newWage;
@@ -144,7 +178,7 @@ void CCreateSalaryTools::autoAdjust()
 			{
 				float wage = m_vecSalarySheet.at(index).s_fDailyWage;
 				float newWage = m_vecSalarySheet.at(index).s_dMonthWage + wage;
-				if (isSalaryMatch(newWage))
+				if (isSalaryMatch(newWage) && isWorkingDaysMatch(m_vecSalarySheet.at(index).s_iWokeingDays + 1))
 				{
 					m_vecSalarySheet.at(index).s_iWokeingDays += 1;
 					m_vecSalarySheet.at(index).s_dMonthWage = newWage;

@@ -28,12 +28,12 @@ public:
 	int RandWokingDays();
 	
 	bool isSalaryMatch(float fSalary);
+	bool isWorkingDaysMatch(int days);
 	void autoAdjust();
 private:
 	int m_iWorkerTotal;		//工人总数
 	double m_dSalaryTotal;	//工资总数
-	double m_dMaxDailySalary;	//最高日工资
-	double m_dMinDailySalary;	//最低日工资
+	vector<double> m_dailyWageVec;	//日工资
 
 	int m_iMaxWorkingDays;		//最大月工作天数
 	int m_iMinWorkingDays;		//最小月工作天数
